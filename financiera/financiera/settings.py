@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'Models',
     'Aplicaciones.Transacciones',
     'Aplicaciones.GestionCuentas',
+    'Aplicaciones.Informe',
 ]
 
 MIDDLEWARE = [

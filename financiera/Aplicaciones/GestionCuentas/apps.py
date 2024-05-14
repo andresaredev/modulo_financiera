@@ -7,3 +7,4 @@ class GestioncuentasConfig(AppConfig):
 
     def ready(self):
         import Models.GestionCuentas.CuentasPorCobrar
+        import Models.GestionCuentas.CuentasPorPagar
