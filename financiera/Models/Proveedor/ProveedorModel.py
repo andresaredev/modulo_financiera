@@ -4,7 +4,7 @@ class Proveedor(models.Model):
     id_proveedor = models.IntegerField(primary_key=True)
     nombre = models.CharField(max_length=50)
     direccion = models.CharField(max_length=50)
-    telefono = models.IntegerField()
+    telefono = models.BigIntegerField()
     tipo_proveedor = models.IntegerField()
     condiciones_pago = models.CharField(max_length=50)
     id_cuenta_pp = models.IntegerField()

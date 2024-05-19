@@ -2,7 +2,7 @@ from django.db import models
 
 class Presupuesto(models.Model):
     id_presupuesto = models.IntegerField(primary_key=True)
-    año_fisacal = models.DateTimeField()
+    año_fiscal = models.DateTimeField()
     cantidad_asignada = models.IntegerField()
     cantidad_gastada = models.IntegerField()
 

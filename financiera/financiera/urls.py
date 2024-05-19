@@ -22,4 +22,7 @@ urlpatterns = [
     path('transacciones/', include('Aplicaciones.Transacciones.urls')),
     path('gestionCuentas/', include('Aplicaciones.GestionCuentas.urls')),
     path('informe/', include('Aplicaciones.Informe.urls')),
+    path('cliente/', include('Aplicaciones.Cliente.urls')),
+    path('presupuesto/', include('Aplicaciones.Presupuesto.urls')),
+    path('proveedor/', include('Aplicaciones.Proveedor.urls')),
 ]

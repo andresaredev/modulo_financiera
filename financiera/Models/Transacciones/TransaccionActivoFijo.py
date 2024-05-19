@@ -8,4 +8,9 @@ class TransaccionActivoFijo(models.Model):
     vida_util = models.IntegerField()
     metodo_depreciacion = models.IntegerField()
     estado_actual = models.BooleanField(default=False)
-    id_transaccion = models.IntegerField()
+
+    class Meta:
+        db_table = 'transaccion_activo_fijo'
+
+    def __str__(self):
+        return f"Transaccion Activo Fijo {self.id_transaccion}"
