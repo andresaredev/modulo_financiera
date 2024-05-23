@@ -1,7 +1,7 @@
 from django.db import models
 
 class CuentasPorCobrar(models.Model):
-    id_cuenta_pc = models.IntegerField(primary_key=True)
+    id_cuenta_pc = models.AutoField(primary_key=True)
     monto_pendiente = models.IntegerField()
     fecha_vencimiento = models.DateTimeField()
     id_cliente = models.IntegerField()

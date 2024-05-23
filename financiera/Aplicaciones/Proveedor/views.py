@@ -2,8 +2,8 @@ import json
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-
 from Models.Proveedor.ProveedorModel import Proveedor
+from django.db.models import Max
 # Create your views here.
 
 def prueba(request):
@@ -18,7 +18,7 @@ def prueba(request):
 def obtener(request):
     if request.method == 'GET':
         try:
-            proveedores = Proveedor.objects.all().values()
+            proveedores = Proveedor.objects.all().order_by('id_proveedor').values()
             return JsonResponse({'proveedores': list(proveedores)}, status=200)
         except Exception as e:
             return JsonResponse({'error': str(e)})
@@ -29,10 +29,11 @@ def obtener(request):
 def crear(request):
     if request.method == 'POST':
         try:
-            
+            max_id = Proveedor.objects.all().aggregate(Max('id_proveedor'))['id_proveedor__max']
+            next_id = (max_id or 0) + 1
             datos = json.loads(request.body)
             proveedor = Proveedor(
-                id_proveedor=datos['id_proveedor'],
+                id_proveedor=next_id,
                 nombre=datos['nombre'],
                 direccion=datos['direccion'],
                 telefono=datos['telefono'],

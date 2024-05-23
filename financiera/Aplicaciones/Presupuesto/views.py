@@ -3,6 +3,8 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from Models.Presupuesto.Presupuesto import Presupuesto
+from django.db.models import Max
+from django.utils import timezone
 
 # Create your views here.
 def prueba(request):
@@ -17,30 +19,34 @@ def prueba(request):
 def obtener(request):
     if request.method == 'GET':
         try:
-            Presuepuestos = Presupuesto.objects.all().values()
+            Presuepuestos = Presupuesto.objects.all().order_by('id_presupuesto').values()
             print('DATOS CON EL MODELO HOLAHOLA', Presuepuestos)
-            return JsonResponse({'informe': list(Presuepuestos)}, status=200)
+            return JsonResponse({'presupuesto': list(Presuepuestos)}, status=200)
         except Exception as e:
             return JsonResponse({'error': e})
         
 
 @csrf_exempt
 def crear(request):
-    try:
-        if request.method == 'POST':
+    if request.method == 'POST':
+        try:
+            max_id = Presupuesto.objects.all().aggregate(Max('id_presupuesto'))['id_presupuesto__max']
+            next_id = (max_id or 0) + 1
             data = json.loads(request.body)
             print(data)
             presupuesto = Presupuesto(
-                id_presupuesto=data['id_presupuesto'],
-                año_fiscal=data['año_fiscal'],
+                id_presupuesto=next_id,
+                año_fiscal= timezone.now(),
                 cantidad_asignada=data['cantidad_asignada'],
                 cantidad_gastada=data['cantidad_gastada']
             )
             presupuesto.save()
             return JsonResponse({'presupuesto': 'Presupuesto creado'}, status=200)
         
-    except Exception as e:
-        return JsonResponse({'error': e}, status=400)
+        except Exception as e:
+            return JsonResponse({'error': e}, status=400)
+        
+    return JsonResponse({'Error': 'method not found'})
     
 
 @csrf_exempt

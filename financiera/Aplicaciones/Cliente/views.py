@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from Models.Cliente.ClienteModel import Cliente
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Max
 
 # Create your views here.
 def prueba(request):
@@ -25,8 +26,10 @@ def crear(request):
     if request.method == 'POST':
         try:
             datos = json.loads(request.body)
+            max_id = Cliente.objects.all().aggregate(Max('id_cliente'))['id_cliente__max']
+            next_id = (max_id or 0) + 1
             nuevo_cliente = Cliente(
-                id_cliente = datos['id_cliente'],
+                id_cliente = next_id,
                 nombre = datos['nombre'],
                 direccion = datos['direccion'],
                 correo = datos['correo'],

@@ -1,7 +1,7 @@
 from django.db import models
 
 class CuentasPorPagar(models.Model):
-    id_cuenta_pp = models.IntegerField(primary_key=True)
+    id_cuenta_pp = models.AutoField(primary_key=True)
     numero_factura = models.IntegerField()
     monto_pendiente = models.IntegerField()
     fecha_vencimiento = models.DateTimeField() 

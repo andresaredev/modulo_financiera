@@ -1,8 +1,11 @@
+import datetime
 import json
+from time import timezone
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from Models.GestionCuentas.CuentasPorCobrar import CuentasPorCobrar
 from Models.GestionCuentas.CuentasPorPagar import CuentasPorPagar
+from django.db.models import Max
 
 # Create your views here.
 def prueba(request):
@@ -30,8 +33,11 @@ def crearCC(request):
         try:
             datos =  json.loads(request.body)
             print('DATOS DESDE POSTMAN',datos)
+            max_id = CuentasPorCobrar.objects.all().aggregate(Max('id_cuenta_pc'))['id_cuenta_pc__max']
+            next_id = (max_id or 0) + 1
+
             nueva_cuenta = CuentasPorCobrar(
-                id_cuenta_pc = datos['id_cuenta_pc'],
+                id_cuenta_pc = next_id,
                 monto_pendiente=datos['monto_pendiente'],
                 fecha_vencimiento=datos['fecha_vencimiento'],
                 id_cliente=datos['id_cliente'],
@@ -95,8 +101,12 @@ def crearCP(request):
         try:
             datos = json.loads(request.body)
             print('DATA', datos)
+
+            max_id = CuentasPorPagar.objects.all().aggregate(Max('id_cuenta_pp'))['id_cuenta_pp__max']
+            next_id = (max_id or 0) + 1
+
             nueva_cuenta = CuentasPorPagar(
-                id_cuenta_pp=datos['id_cuenta_pp'],
+                id_cuenta_pp=next_id,
                 numero_factura=datos['numero_factura'],
                 monto_pendiente=datos['monto_pendiente'],
                 fecha_vencimiento=datos['fecha_vencimiento'],

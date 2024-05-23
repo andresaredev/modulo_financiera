@@ -3,9 +3,11 @@ import json
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
+from Aplicaciones.GestionCuentas.views import crearCC
 from Models.Transacciones.TransaccionActivoFijo import TransaccionActivoFijo
 from Models.Transacciones.TransaccionModel import Transaccion
 from django.core import serializers
+from django.db.models import Max
 
 # Create your views here.
 
@@ -18,10 +20,11 @@ def test(request):
 def crear(request):
     if request.method == 'POST':
         try:
+            max_id = Transaccion.objects.all().aggregate(Max('id_transaccion'))['id_transaccion__max']
+            next_id = (max_id or 0) + 1
             datos =  json.loads(request.body)
-            print('DATOS DESDE POSTMAN',datos)
             nueva_transaccion = Transaccion(
-                id_transaccion=datos['id_transaccion'],
+                id_transaccion=next_id,
                 fecha=timezone.now(),
                 monto=datos['monto'],
                 tipo_transaccion=datos['tipo_transaccion'],
@@ -30,8 +33,10 @@ def crear(request):
                 id_activo_fijo=datos['id_activo_fijo'],
                 id_informe=datos['id_informe'])
             nueva_transaccion.save()
+           
             print('DATOS CON EL MODELO',nueva_transaccion)
-            return JsonResponse({'message': 'Nueva transaccion creada'}) 
+            crearCC(nueva_transaccion.id_transaccion)
+            return JsonResponse({'message': 'Nueva transaccion creada', "id_transaccion": nueva_transaccion.id_transaccion}) 
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Formato Json inválido en el cuerpo de la solicitud'}, status=400)
 
@@ -42,8 +47,7 @@ def crear(request):
 def obtener(request):
     if request.method == 'GET':
         try:
-            transaccion = Transaccion.objects.all().values()
-            print('DATOS CON EL MODELO',transaccion)
+            transaccion = Transaccion.objects.all().order_by('id_transaccion').values()
             return JsonResponse({'transacciones': list(transaccion)}, status=200)
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Formato Json inválido en el cuerpo de la solicitud'}, status=400)
@@ -91,7 +95,7 @@ def eliminar(request, id):
 def obtenerAF(request):
     if request.method == 'GET':
         try:
-            transaccionActivoFijo = TransaccionActivoFijo.objects.all().values()
+            transaccionActivoFijo = TransaccionActivoFijo.objects.all().order_by('id_activo_fijo').values()
             print('DATOS CON EL MODELO',transaccionActivoFijo)
             return JsonResponse({'transaccionActivoFijo': list(transaccionActivoFijo)}, status=200)
         except Exception as e:
@@ -104,9 +108,11 @@ def obtenerAF(request):
 def crearAF(request):
     if request.method == 'POST':
         try:
+            max_id = TransaccionActivoFijo.objects.all().aggregate(Max('id_activo_fijo'))['id_activo_fijo__max']
+            next_id = (max_id or 0) + 1
             datos = json.loads(request.body)
             transaccionActivoFijo = TransaccionActivoFijo(
-                id_activo_fijo=datos['id_activo_fijo'],
+                id_activo_fijo=next_id,
                 nombre=datos['nombre'],
                 valor_original=datos['valor_original'],
                 fecha_adquirido=timezone.now(),

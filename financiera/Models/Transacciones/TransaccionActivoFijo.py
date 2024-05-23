@@ -1,7 +1,7 @@
 from django.db import models
 
 class TransaccionActivoFijo(models.Model):
-    id_activo_fijo = models.IntegerField(primary_key=True)
+    id_activo_fijo = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=50)
     valor_original = models.IntegerField()
     fecha_adquirido = models.DateTimeField()

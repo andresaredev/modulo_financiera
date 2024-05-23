@@ -1,7 +1,7 @@
 from django.db import models
 
 class InformeFinanciero(models.Model):
-    id_informe = models.IntegerField(primary_key=True)
+    id_informe = models.AutoField(primary_key=True)
     nombre_informe = models.CharField(max_length=50)
     fecha = models.DateTimeField()
     tipo_informe = models.CharField(max_length=50)

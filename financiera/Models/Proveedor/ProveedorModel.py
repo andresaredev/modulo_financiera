@@ -1,7 +1,7 @@
 from django.db import models
 
 class Proveedor(models.Model):
-    id_proveedor = models.IntegerField(primary_key=True)
+    id_proveedor = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=50)
     direccion = models.CharField(max_length=50)
     telefono = models.BigIntegerField()

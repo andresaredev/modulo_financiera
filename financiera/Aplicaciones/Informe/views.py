@@ -3,7 +3,8 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from Models.Informe.InformeFinanciero import InformeFinanciero
-
+from django.db.models import Max
+from django.utils import timezone
 # Create your views here.
 
 
@@ -17,7 +18,7 @@ def prueba(request):
 def obtener(request):
     if request.method == 'GET':
         try:
-            informe = InformeFinanciero.objects.all().values()
+            informe = InformeFinanciero.objects.all().order_by('id_informe').values()
             return JsonResponse({'informe': list(informe)}, status=200)
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Formato Json inválido en el cuerpo de la solicitud'})
@@ -27,12 +28,15 @@ def obtener(request):
 def crear(request):
     if request.method == 'POST':
         try:
+            max_id = InformeFinanciero.objects.all().aggregate(Max('id_informe'))['id_informe__max']
+            next_id = (max_id or 0) + 1
+
             datos = json.loads(request.body)
             print('DATOS DESDE POSTMAN', datos)
             nuevo_informe = InformeFinanciero(
-                id_informe=datos['id_informe'],
+                id_informe=next_id,
                 nombre_informe=datos['nombre_informe'],
-                fecha=datos['fecha'],
+                fecha=timezone.now(),
                 tipo_informe=datos['tipo_informe'],
                 detalle_informe=datos['detalle_informe'],
                 nombre_responsable=datos['nombre_responsable'],

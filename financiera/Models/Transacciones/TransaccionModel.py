@@ -1,7 +1,7 @@
 from django.db import models
 
 class Transaccion(models.Model):
-    id_transaccion = models.IntegerField(primary_key=True)
+    id_transaccion = models.AutoField(primary_key=True)
     fecha = models.DateField()
     monto = models.IntegerField()
     tipo_transaccion = models.CharField(max_length=50)
